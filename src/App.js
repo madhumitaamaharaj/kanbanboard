@@ -1,11 +1,17 @@
-import KanbanUI from "./components/kanbanUi";
+import React from 'react';
+
+import KanbanUI from './components/kanbanUi';
 
 
 function App() {
   return (
-    <div >
-     <KanbanUI/>
-    </div>
+    
+      <div >
+      
+       <KanbanUI/>
+      
+      </div>
+   
   );
 }
 
