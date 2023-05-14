@@ -1,0 +1,90 @@
+.mainDiv{
+    margin: 0 30%;
+    border: 1px solid;
+    width: 40rem;
+    height: 30rem;
+    padding: 0 1.5rem;
+    border-radius: .5rem;
+    z-index: 10000;
+    overflow:auto;
+    /* scrollbar-width: thin;
+    scrollbar-color: transparent ; */
+}
+
+.mainDiv::-webkit-scrollbar {
+    display:none;
+}
+
+.title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.head{
+    margin-bottom: 0;
+}
+.notificationWatchContainer {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  .watchButton {
+display: flex;
+flex-direction: column;
+    margin-left: 15rem;
+  }
+    .watchButton:hover {
+        background-color: lightgray;
+      }
+    
+.para{
+    margin-left: 2.7rem;
+    
+}
+.des{
+    margin-top: 1rem;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+.username{
+    border: 1px solid;
+    border-radius: 50%;
+    background-color: rgb(7, 105, 218);
+    color: white;
+    padding: .3rem;
+}
+.firstInputBox{
+    margin-left: 2.7rem;
+    width: 25rem;
+    height: 3.5rem;   
+    margin-bottom: .5rem;
+}
+.secondInputBox{
+    margin-left: .8rem;
+    width: 25rem;
+    height: 1.8rem;   
+}
+.comments{
+    margin-left: 1rem;
+}
+.commentsTime{
+    margin-left: 2.9rem;
+    margin-top: 0;
+    font-size: small;
+}
+.secondInputBox {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    width: 25rem;
+    height: 1.8rem;
+  }
+  .watchButton1 {
+    display: flex;
+    flex-direction: column;
+        margin-left: 15rem;
+      }
+        .watchButton1:hover {
+            background-color: lightgray;
+          }

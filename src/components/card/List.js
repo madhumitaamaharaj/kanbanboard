@@ -4,12 +4,13 @@ import { useRecoilState } from 'recoil';
 import { addingTaskIndexState, newTaskNameState, listsState } from './atom';
 import { Typography, TextField, Button, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const List = ({ list, listIndex }) => {
   const [addingTaskIndex, setAddingTaskIndex] = useRecoilState(addingTaskIndexState);
   const [newTaskName, setNewTaskName] = useRecoilState(newTaskNameState);
   const [lists, setLists] = useRecoilState(listsState);
-
+  const navigate = useNavigate();
   const handleAddTask = () => {
     setAddingTaskIndex(listIndex);
   };
@@ -39,7 +40,7 @@ const List = ({ list, listIndex }) => {
         <div>
           {list.tasks.map((task, taskIndex) => (
             <StyledColumn className='task' key={taskIndex}>
-              <div className="task">{task}</div>
+              <div className="task" onClick={() => navigate('/activity')}>{task}</div>
             </StyledColumn>
           ))}
         </div>
