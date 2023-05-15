@@ -9,7 +9,7 @@ function App() {
   return (
     <BrowserRouter>
       <div>
-        <Nav />
+       
         <Routes>
           <Route path="/" element={<KanbanUI />} />
           <Route path="/activity/:taskId" element={<Activity />} />
