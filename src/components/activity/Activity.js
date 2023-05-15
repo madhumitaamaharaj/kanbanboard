@@ -11,21 +11,15 @@ import "react-quill/dist/quill.snow.css";
 import styles from "./Activity.module.css";
 import { useNavigate } from "react-router-dom";
 import DescriptionEditor from "./DescriptionEditor";
-import { cardDataState } from '../card/atom';
-import { useRecoilState } from "recoil";
-
 
 export default function Activity() {
   const [showDetails, setShowDetails] = useState(false);
-  const [watching, setWatching] = useState(false);
+  const [watching, setWatching] = useState(false); 
   const [description, setDescription] = useState("");
-  const [taskName, setTaskName] = useState(""); 
   const [comment, setComment] = useState("");
   const [showDescription, setShowDescription] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
-  const [cardData, setCardData] = useRecoilState(cardDataState);
   
-
   const [editingDescription, setEditingDescription] = useState(false);
   const navigate = useNavigate();
 
@@ -52,20 +46,17 @@ export default function Activity() {
   const handleShowDescription = () => {
     setShowDescription(true);
   };
-
-  
   const handleSaveDescription = () => {
-    setCardData((prevData) => ({
-      ...prevData,
-      description: description,
-    }));
-  }
+    setEditingDescription(false);
+    
+    console.log("Description saved:", description);
+  };
+
   const handleCancelDescription = () => {
     setEditingDescription(false);
     setShowDescription(false);
     setDescription("");
   };
-
   const handleShowActive = () => {
     setShowActivity(true);
   };
@@ -75,7 +66,7 @@ export default function Activity() {
       <div className={styles.mainDiv}>
         <div className={styles.title}>
           <h2 className={styles.head}>
-            <span className={styles.codeZingerIcon}></span>💻 
+            <span className={styles.codeZingerIcon}></span>💻 CodeZinger
           </h2>
           <div className={styles.closeButton}>
             <IconButton
@@ -85,7 +76,7 @@ export default function Activity() {
               color="neutral"
               size="small"
             >
-              <CloseIcon onClick={() => navigate("/")} />
+              <CloseIcon onClick={() => navigate('/')} />
             </IconButton>
           </div>
         </div>
@@ -106,27 +97,17 @@ export default function Activity() {
         </div>
         {showDescription ? (
           <div className={styles.descriptionBox}>
-            <input
-              type="text"
-              className={styles.taskNameInput}
-              placeholder="Task Name"
-              value
-              ={taskName}
-              onChange={(e) => setTaskName(e.target.value)}
-            />
             <ReactQuill
               value={description}
               onChange={handleDescriptionChange}
               placeholder="Add a more detailed description..."
             />
             <div className={styles.buttonContainer}>
-              <Button onClick={handleSaveDescription}>Save</Button>
-              <Button
-                color="neutral"
-                variant="soft"
-                onClick={handleCancelDescription}
-                sx={{ marginLeft: "0.5rem" }}
-              >
+            <Button   onClick={handleSaveDescription}>
+            Save
+          </Button>
+          
+              <Button color="neutral"  variant="soft" onClick={handleCancelDescription} sx={{ marginLeft: "0.5rem" }}>
                 Cancel
               </Button>
             </div>
@@ -137,7 +118,9 @@ export default function Activity() {
             placeholder="Add a more detailed description..."
             onClick={handleShowDescription}
           />
-        )} <div className={styles.des}>
+        )}
+       
+        <div className={styles.des}>
           <ReceiptLongIcon sx={{ marginRight: "1rem" }} /> <h4>Activity</h4>
           <div className={styles.watchButton1}>
             <Button variant="contained" onClick={handleToggleDetails}>
@@ -159,18 +142,20 @@ export default function Activity() {
             className={styles.secondInputBox}
             placeholder="Write a Comment..."
             onClick={handleShowActive}
-          />
-        )}
+            />
+            )}
+            
 
+            
         {showDetails && (
           <div className={styles.detailsContent}>
-            <span className={styles.username}>MC</span>
-            <span className={styles.comments}>MC added this card to To Do</span>
-            <p className={styles.commentsTime}>5 minutes ago</p>
+          <span className={styles.username}>MC</span>
+          <span className={styles.comments}>MC added this card to To Do</span>
+          <p className={styles.commentsTime}>5 minutes ago</p>
           </div>
-        )}
-        <br /> <br />
-      </div>
-    </>
-    );
-  }
+          )}
+          <br /> <br />
+          </div>
+          </>
+          );
+          }

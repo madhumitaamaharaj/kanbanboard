@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import { newListNameState, showAddListState, listsState } from "./atom";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-
+import { v4 as uuid } from "uuid";
 import { StyledColumn } from "./StyledComponents";
 
 const AddList = () => {
@@ -22,6 +22,7 @@ const AddList = () => {
   const handleAddList = () => {
     if (newListName) {
       const newList = {
+        id: uuid(), 
         name: newListName,
         tasks: [],
       };
