@@ -10,7 +10,10 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import styles from "./Activity.module.css";
 import { useNavigate } from "react-router-dom";
+
 import DescriptionEditor from "./DescriptionEditor";
+import { useRecoilState } from "recoil";
+import { listId, listsState, tasksIndex } from "../card/atom";
 
 export default function Activity() {
   const [showDetails, setShowDetails] = useState(false);
@@ -19,10 +22,11 @@ export default function Activity() {
   const [comment, setComment] = useState("");
   const [showDescription, setShowDescription] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
-  
+  const [listsid, setlistsId] = useRecoilState(listId);
   const [editingDescription, setEditingDescription] = useState(false);
+  const [taskIndex, setTaskIndex] = useRecoilState(tasksIndex);
   const navigate = useNavigate();
-
+  const [List, setList] = useRecoilState(listsState);
   const handleCloseDialog = () => {
     console.log("Dialog closed");
   };
@@ -46,15 +50,36 @@ export default function Activity() {
   const handleShowDescription = () => {
     setShowDescription(true);
   };
-  const handleSaveDescription = () => {
-    setEditingDescription(false);
-    
-    console.log("Description saved:", description);
-  };
+  function addDescription() {
+    const newList = List.map((item) => {
+      if (item.id === listsid) {
+        const newTaskList = item.tasks.map((obj, index) => {
+          if (index === taskIndex) {
+            return { ...obj, description: description };
+            
+          } else {
+
+            return obj;
+          }
+          
+        });
+        
+        return { ...item, tasks: newTaskList };
+      } else {
+        return item;
+      }
+    });
+    setList(newList);
+    console.log(description);
+    localStorage.setItem("Lists", JSON.stringify(newList));
+    setDescription("");
+  }
+  
 
   const handleCancelDescription = () => {
     setEditingDescription(false);
     setShowDescription(false);
+    
     setDescription("");
   };
   const handleShowActive = () => {
@@ -103,7 +128,7 @@ export default function Activity() {
               placeholder="Add a more detailed description..."
             />
             <div className={styles.buttonContainer}>
-            <Button   onClick={handleSaveDescription}>
+            <Button   onClick={addDescription}>
             Save
           </Button>
           
