@@ -1,5 +1,4 @@
 import React from 'react';
-
 import KanbanUI from './components/card/kanbanUi';
 import Nav from './components/layout/Layout';
 import styles from "./App.module.css"
@@ -9,16 +8,13 @@ import Activity from './components/activity/Activity';
 function App() {
   return (
     <BrowserRouter>
-    <div  >
-          
-          
-            
-         <Routes>
-              <Route path="/" element={<KanbanUI/>} />
-              <Route path="/activity" element={<Activity/>} />
-           
+      <div>
+        <Nav />
+        <Routes>
+          <Route path="/" element={<KanbanUI />} />
+          <Route path="/activity/:taskId" element={<Activity />} />
         </Routes>
-        </div>
+      </div>
     </BrowserRouter>
   );
 }

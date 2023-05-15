@@ -24,3 +24,12 @@ export const addingTaskIndexState = atom({
   key: 'addingTaskIndexState',
   default: null,
 });
+
+
+export const cardDataState = atom({
+  key: 'cardDataState',
+  default: {
+    taskName: '',
+    description: '',
+  },
+});
