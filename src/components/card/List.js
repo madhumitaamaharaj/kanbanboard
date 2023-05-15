@@ -1,16 +1,18 @@
-import React from 'react';
-import { StyledColumn } from './StyledComponents';
-import { useRecoilState } from 'recoil';
-import { addingTaskIndexState, newTaskNameState, listsState } from './atom';
-import { Typography, TextField, Button, IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { Navigate, useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { StyledColumn } from "./StyledComponents";
+import { useRecoilState } from "recoil";
+import { addingTaskIndexState, newTaskNameState, listsState } from "./atom";
+import { Typography, TextField, Button, IconButton } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { Navigate, json, useNavigate } from "react-router-dom";
 
 const List = ({ list, listIndex }) => {
-  const [addingTaskIndex, setAddingTaskIndex] = useRecoilState(addingTaskIndexState);
+  const [addingTaskIndex, setAddingTaskIndex] =
+    useRecoilState(addingTaskIndexState);
   const [newTaskName, setNewTaskName] = useRecoilState(newTaskNameState);
   const [lists, setLists] = useRecoilState(listsState);
   const navigate = useNavigate();
+
   const handleAddTask = () => {
     setAddingTaskIndex(listIndex);
   };
@@ -19,18 +21,21 @@ const List = ({ list, listIndex }) => {
     if (newTaskName) {
       setLists((prevLists) => {
         const updatedLists = [...prevLists];
+        const newTask = { name: newTaskName, description: "", activity: [] };
         updatedLists[addingTaskIndex] = {
           ...updatedLists[addingTaskIndex],
-          tasks: [newTaskName, ...updatedLists[addingTaskIndex].tasks],
+          tasks: [newTask, ...updatedLists[addingTaskIndex].tasks],
         };
         return updatedLists;
       });
-      setNewTaskName('');
+      setNewTaskName("");
       setAddingTaskIndex(null);
     }
+    // localStorage.setItem("Lists", JSON.stringify(lists));
   };
-  
-
+  useEffect(() => {
+    localStorage.setItem("Lists", JSON.stringify(lists));
+  }, [lists]);
   return (
     <StyledColumn>
       <div>
@@ -39,8 +44,10 @@ const List = ({ list, listIndex }) => {
         </Typography>
         <div>
           {list.tasks.map((task, taskIndex) => (
-            <StyledColumn className='task' key={taskIndex}>
-              <div className="task" onClick={() => navigate('/activity')}>{task}</div>
+            <StyledColumn className="task" key={taskIndex}>
+              <div className="task" onClick={() => navigate("/activity")}>
+                {task.name}
+              </div>
             </StyledColumn>
           ))}
         </div>
@@ -57,7 +64,11 @@ const List = ({ list, listIndex }) => {
               />
             </div>
             <div>
-              <Button variant="contained" startIcon={<AddIcon />} onClick={handleConfirmTask}>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleConfirmTask}
+              >
                 Add
               </Button>
             </div>
