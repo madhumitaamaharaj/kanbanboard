@@ -1,7 +1,7 @@
 .mainDiv{
     margin: 0 30%;
     border: 1px solid;
-    width: 40rem;
+    width: 30rem;
     height: 50rem;
     padding: 0 1.5rem;
     border-radius: .5rem;
@@ -47,7 +47,10 @@ flex-direction: column;
     display: flex;
     align-items: center;
 }
-
+.editButton {
+    margin-right: 1rem;
+    cursor: pointer;
+  }
 .username{
     border: 1px solid;
     border-radius: 50%;

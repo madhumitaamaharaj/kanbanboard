@@ -11,15 +11,15 @@ import "react-quill/dist/quill.snow.css";
 import styles from "./Activity.module.css";
 import { useNavigate } from "react-router-dom";
 
-import DescriptionEditor from "./DescriptionEditor";
+
 import { useRecoilState } from "recoil";
 import { listId, listsState, tasksIndex } from "../card/atom";
 
 export default function Activity() {
   const [showDetails, setShowDetails] = useState(false);
-  const [watching, setWatching] = useState(false); 
+  const [watching, setWatching] = useState(false);
   const [description, setDescription] = useState("");
-  const [comment, setComment] = useState("");
+  const [activity, setActivity] = useState("");
   const [showDescription, setShowDescription] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
   const [listsid, setlistsId] = useRecoilState(listId);
@@ -43,9 +43,11 @@ export default function Activity() {
     setDescription(value);
   };
 
-  const handleCommentChange = (value) => {
-    setComment(value);
+
+  const handleActivityChange = (value) => {
+    setActivity(value);
   };
+
 
   const handleShowDescription = () => {
     setShowDescription(true);
@@ -56,14 +58,14 @@ export default function Activity() {
         const newTaskList = item.tasks.map((obj, index) => {
           if (index === taskIndex) {
             return { ...obj, description: description };
-            
+
           } else {
 
             return obj;
           }
-          
+
         });
-        
+
         return { ...item, tasks: newTaskList };
       } else {
         return item;
@@ -74,13 +76,44 @@ export default function Activity() {
     localStorage.setItem("Lists", JSON.stringify(newList));
     setDescription("");
   }
-  
+  function addActivity() {
+    const newList = List.map((item) => {
+      if (item.id === listsid) {
+        const newTaskList = item.tasks.map((obj, index) => {
+          if (index === taskIndex) {
+            return { ...obj, activity: activity };
+
+          } else {
+
+            return obj;
+          }
+
+        });
+
+        return { ...item, tasks: newTaskList };
+      } else {
+        return item;
+      }
+    });
+    setList(newList);
+    console.log(description);
+    localStorage.setItem("Lists", JSON.stringify(newList));
+    setActivity("");
+  }
+
+
 
   const handleCancelDescription = () => {
     setEditingDescription(false);
     setShowDescription(false);
-    
+
     setDescription("");
+  };
+  const handleCancelActivity = () => {
+
+    setShowActivity(false);
+
+    setActivity("");
   };
   const handleShowActive = () => {
     setShowActivity(true);
@@ -119,8 +152,12 @@ export default function Activity() {
         </div>
         <div className={styles.des}>
           <MenuIcon sx={{ marginRight: "1rem" }} /> <h4>Description</h4>
+          <div className={styles.watchButton1}>
+           <Button variant="contained" onClick={handleShowDescription}>Edit</Button>
+            
+          </div>
         </div>
-        {showDescription ? (
+        {showDescription && (
           <div className={styles.descriptionBox}>
             <ReactQuill
               value={description}
@@ -128,23 +165,19 @@ export default function Activity() {
               placeholder="Add a more detailed description..."
             />
             <div className={styles.buttonContainer}>
-            <Button   onClick={addDescription}>
-            Save
-          </Button>
-          
-              <Button color="neutral"  variant="soft" onClick={handleCancelDescription} sx={{ marginLeft: "0.5rem" }}>
+              <Button onClick={addDescription}>Save</Button>
+              <Button
+                color="neutral"
+                variant="soft"
+                onClick={handleCancelDescription}
+                sx={{ marginLeft: "0.5rem" }}
+              >
                 Cancel
               </Button>
             </div>
           </div>
-        ) : (
-          <input
-            className={styles.firstInputBox}
-            placeholder="Add a more detailed description..."
-            onClick={handleShowDescription}
-          />
         )}
-       
+
         <div className={styles.des}>
           <ReceiptLongIcon sx={{ marginRight: "1rem" }} /> <h4>Activity</h4>
           <div className={styles.watchButton1}>
@@ -153,34 +186,35 @@ export default function Activity() {
             </Button>
           </div>
         </div>
-        <span className={styles.username}>MC</span>
+
         {showActivity ? (
+
           <div className={styles.activity}>
+
             <ReactQuill
-              value={description}
-              onChange={handleDescriptionChange}
+              value={activity}
+              onChange={handleActivityChange}
               placeholder="Write a Comment..."
             />
+            <Button onClick={addActivity}>Save</Button>
+            <Button
+              color="neutral"
+              variant="soft"
+              onClick={handleCancelActivity}
+              sx={{ marginLeft: "0.5rem" }}
+            >
+              Cancel
+            </Button>
           </div>
         ) : (
           <input
             className={styles.secondInputBox}
             placeholder="Write a Comment..."
             onClick={handleShowActive}
-            />
-            )}
-            
-
-            
-        {showDetails && (
-          <div className={styles.detailsContent}>
-          <span className={styles.username}>MC</span>
-          <span className={styles.comments}>MC added this card to To Do</span>
-          <p className={styles.commentsTime}>5 minutes ago</p>
-          </div>
-          )}
-          <br /> <br />
-          </div>
-          </>
-          );
-          }
+          />
+        )}
+       
+      </div>
+    </>
+  );
+}

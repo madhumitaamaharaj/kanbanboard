@@ -8,6 +8,7 @@ import AddIcon from "@mui/icons-material/Add";
 import {  useNavigate } from "react-router-dom";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import styles from "./list.module.css"
 
 const List = ({ list, listIndex }) => {
   const [addingTaskIndex, setAddingTaskIndex] = useRecoilState(addingTaskIndexState);
@@ -137,7 +138,7 @@ const List = ({ list, listIndex }) => {
                     }}
                   >
                     <Typography sx={{ p: 2 }}>
-                      <button onClick={() => handleCardDelete(task.id)}>
+                      <button className={styles.botton}onClick={() => handleCardDelete(task.id)}>
                         Delete
                       </button>
                     </Typography>
