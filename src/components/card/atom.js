@@ -9,6 +9,7 @@ export const tasksIndex = atom({
   default: null,
 });
 
+
 export const listsState = atom({
   key: 'listsState',
   default: [],
