@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { StyledColumn } from "./StyledComponents"; 
-import { useRecoilState } from "recoil";
-
+import { StyledColumn } from "./StyledComponents";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useNavigate } from "react-router-dom";
 import {
   addingTaskIndexState,
   newTaskNameState,
@@ -13,7 +13,7 @@ import {
 } from "./atom";
 import { Typography, TextField, Button, IconButton, Popover } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useNavigate } from "react-router-dom";
+
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,6 +30,7 @@ const List = ({ list, listIndex }) => {
   const [, setListsId] = useRecoilState(listId);
   const [, setTaskIndex] = useRecoilState(tasksIndex);
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const cardData = useRecoilValue(cardDataState);
 
   const handleAddTask = () => {
     setAddingTaskIndex(listIndex);
@@ -44,8 +45,8 @@ const List = ({ list, listIndex }) => {
         const newTask = {
           id: editingTaskId || uuid(),
           name: newTaskName,
-          description: "",
-          activity: [],
+          description: "", // Add description field
+          activity: [], // Add activity field
         };
         if (editingTaskId) {
           const existingTaskIndex = updatedLists[addingTaskIndex].tasks.findIndex((task) => task.id === editingTaskId);
@@ -65,6 +66,7 @@ const List = ({ list, listIndex }) => {
             tasks: [...updatedLists[addingTaskIndex].tasks, newTask],
           };
         }
+        localStorage.setItem("Lists", JSON.stringify(updatedLists)); // Update local storage
         return updatedLists;
       });
       setNewTaskName("");
@@ -73,10 +75,11 @@ const List = ({ list, listIndex }) => {
     }
   };
 
+
   const handleListDelete = (id) => {
     const filteredList = lists.filter((list) => list.id !== id);
     setLists(filteredList);
-    localStorage.setItem("Lists", JSON.stringify(filteredList));
+    localStorage.setItem("Lists", JSON.stringify(filteredList)); // Update local storage
   };
 
   const handleCardDelete = (cardId) => {
@@ -84,12 +87,10 @@ const List = ({ list, listIndex }) => {
       const updatedLists = [...prevLists];
       const updatedTasks = updatedLists[listIndex].tasks.filter((task) => task.id !== cardId);
       updatedLists[listIndex] = { ...updatedLists[listIndex], tasks: updatedTasks };
+      localStorage.setItem("Lists", JSON.stringify(updatedLists)); // Update local storage
       return updatedLists;
     });
-    localStorage.setItem("Lists", JSON.stringify(lists));
   };
-
- 
 
   useEffect(() => {
     if (listIndex === addingTaskIndex) {
@@ -100,35 +101,26 @@ const List = ({ list, listIndex }) => {
     }
   }, [listIndex, addingTaskIndex]);
 
+  useEffect(() => {
+    if (cardData.listId === list.id && cardData.taskIndex !== null) {
+      navigate(`/activity/${cardData.taskIndex}`);
+    }
+  }, [cardData, list.id, navigate]);
+
   const handleTaskEdit = (taskId) => {
     setNewTaskName(lists[listIndex].tasks.find((task) => task.id === taskId).name);
     setEditingTaskId(taskId);
     setAddingTaskIndex(listIndex);
   };
 
-  const handleDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const { source, destination } = result;
-
-    if (source.droppableId === destination.droppableId && source.index === destination.index) {
-      return;
-    }
-
-    setLists((prevLists) => {
-      const updatedLists = [...prevLists];
-      const sourceList = updatedLists[source.droppableId];
-      const destinationList = updatedLists[destination.droppableId];
-      const sourceTasks = [...sourceList.tasks];
-      const destinationTasks = [...destinationList.tasks];
-      const [removed] = sourceTasks.splice(source.index, 1);
-      destinationTasks.splice(destination.index, 0, removed);
-
-      updatedLists[source.droppableId] = { ...sourceList, tasks: sourceTasks };
-      updatedLists[destination.droppableId] = { ...destinationList, tasks: destinationTasks };
-
-      return updatedLists;
-    });
+  const handleTaskClick = (task) => {
+    setCardData((prevData) => ({
+      ...prevData,
+      taskName: "Card Name",
+    }));
+    setListsId(list.id);
+    setTaskIndex(task.id);
+    navigate(`/activity/${task.id}`); // Navigate to activity page
   };
 
   return (
@@ -195,7 +187,7 @@ const List = ({ list, listIndex }) => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <Typography variant="body1" gutterBottom>
+                        <Typography onClick={() => handleTaskClick(task)} variant="body1" gutterBottom>
                           {task.name}
                         </Typography>
                         <div className={styles.taskButtons}>
