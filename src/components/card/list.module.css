@@ -1,3 +1,68 @@
-.button{
-    margin-left: 10rem;
+.container {
+  display: flex;
+  align-items: center;
+  background-color: #f8f8f8;
+  justify-content: space-between;
+}
+
+.title {
+  margin-right: 10px;
+}
+.editDeleteIcon {
+  padding: 0;
+  margin-left: 5px; 
+}
+.list {
+  background-color: #f8f8f8;
+  position: relative;
+}
+
+.actions {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.task-name {
+  margin-right: 10px;
+  flex: 1;
+}
+
+.task-actions {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  
+}
+
+.add-task-container {
+  margin-top: 10px;
+}
+
+.add-task-input {
+  width: 100%;
+}
+
+.add-task-button {
+  margin-top: 10px;
+}
+
+.more-icon-container {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.more-icon-button {
+  padding: 0;
 }
