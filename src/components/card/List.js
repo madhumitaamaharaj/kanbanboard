@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { StyledColumn } from "./StyledComponents"; 
+import { StyledColumn } from "./StyledComponents"; // Adjust the import path accordingly
 import { useRecoilState } from "recoil";
 import {
   addingTaskIndexState,
