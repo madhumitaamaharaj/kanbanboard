@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { StyledColumn } from "./StyledComponents"; // Adjust the import path accordingly
+import { StyledColumn } from "./StyledComponents"; 
 import { useRecoilState } from "recoil";
+
 import {
   addingTaskIndexState,
   newTaskNameState,
@@ -17,7 +18,8 @@ import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import styles from "./List.module.css";
+import styles from "./list.module.css";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
 const List = ({ list, listIndex }) => {
   const [addingTaskIndex, setAddingTaskIndex] = useRecoilState(addingTaskIndexState);
@@ -71,7 +73,6 @@ const List = ({ list, listIndex }) => {
     }
   };
 
-
   const handleListDelete = (id) => {
     const filteredList = lists.filter((list) => list.id !== id);
     setLists(filteredList);
@@ -82,164 +83,182 @@ const List = ({ list, listIndex }) => {
     setLists((prevLists) => {
       const updatedLists = [...prevLists];
       const updatedTasks = updatedLists[listIndex].tasks.filter((task) => task.id !== cardId);
-      updatedLists[listIndex] = {
-        ...updatedLists[listIndex],
-        tasks: updatedTasks,
-      };
+      updatedLists[listIndex] = { ...updatedLists[listIndex], tasks: updatedTasks };
+      return updatedLists;
+    });
+    localStorage.setItem("Lists", JSON.stringify(lists));
+  };
+
+ 
+
+  useEffect(() => {
+    if (listIndex === addingTaskIndex) {
+      const newTaskInput = document.getElementById(`new-task-input-${listIndex}`);
+      if (newTaskInput) {
+        newTaskInput.focus();
+      }
+    }
+  }, [listIndex, addingTaskIndex]);
+
+  const handleTaskEdit = (taskId) => {
+    setNewTaskName(lists[listIndex].tasks.find((task) => task.id === taskId).name);
+    setEditingTaskId(taskId);
+    setAddingTaskIndex(listIndex);
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const { source, destination } = result;
+
+    if (source.droppableId === destination.droppableId && source.index === destination.index) {
+      return;
+    }
+
+    setLists((prevLists) => {
+      const updatedLists = [...prevLists];
+      const sourceList = updatedLists[source.droppableId];
+      const destinationList = updatedLists[destination.droppableId];
+      const sourceTasks = [...sourceList.tasks];
+      const destinationTasks = [...destinationList.tasks];
+      const [removed] = sourceTasks.splice(source.index, 1);
+      destinationTasks.splice(destination.index, 0, removed);
+
+      updatedLists[source.droppableId] = { ...sourceList, tasks: sourceTasks };
+      updatedLists[destination.droppableId] = { ...destinationList, tasks: destinationTasks };
+
       return updatedLists;
     });
   };
 
-  const handleEditTask = (taskId) => {
-    const task = lists[listIndex].tasks.find((t) => t.id === taskId);
-    if (task) {
-      setNewTaskName(task.name);
-      setAddingTaskIndex(listIndex);
-      setEditingTaskId(task.id);
-    }
-  };
-
-  useEffect(() => {
-    localStorage.setItem("Lists", JSON.stringify(lists));
-  }, [lists]);
-
-  const handleTaskClick = (task, listId, taskId) => {
-    setCardData((prevData) => ({
-      ...prevData,
-      taskName: "Card Name",
-    }));
-    setListsId(listId);
-    setTaskIndex(taskId);
-    navigate(`/activity/${task.id}`);
-
-  };
-
   return (
-    <StyledColumn className={styles.list}>
-      <div className={styles.container}>
-        <Typography variant="h6" className={styles.title}>
-          {list.name}
-        </Typography>
-        <div className={styles.actions}>
-          <PopupState variant="popover" popupId="demo-popup-popover">
-            {(popupState) => (
-              <div>
-                <IconButton {...bindTrigger(popupState)} className={styles.moreIconContainer}>
-                  <MoreHorizIcon />
-                </IconButton>
-                <Popover
-                  {...bindPopover(popupState)}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
-                  }}
-                >
-                  <Typography sx={{ p: 2 }}>
-                    <Button onClick={() => handleListDelete(list.id)}>
-                      <DeleteIcon />
+    <Draggable draggableId={String(list.id)} index={listIndex}>
+      {(provided) => (
+        <StyledColumn
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+          key={list.id}
+          className={styles.column}
+        >
+          <div className={styles.columnHeader}>
+            <Typography variant="h6" gutterBottom>
+              {list.name}
+            </Typography>
+            <PopupState variant="popover" popupId="demo-popup-popover">
+              {(popupState) => (
+                <div>
+                  <IconButton
+                    size="small"
+                    aria-label="more"
+                    aria-controls="long-menu"
+                    aria-haspopup="true"
+                    {...bindTrigger(popupState)}
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Popover
+                    {...bindPopover(popupState)}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                  >
+                    <div className={styles.popover}>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        aria-label="delete list"
+                        onClick={() => handleListDelete(list.id)}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </div>
+                  </Popover>
+                </div>
+              )}
+            </PopupState>
+          </div>
+          <Droppable droppableId={String(list.id)}>
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {list.tasks.map((task, index) => (
+                  <Draggable key={task.id} draggableId={String(task.id)} index={index}>
+                    {(provided) => (
+                      <div
+                        className={styles.task}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <Typography variant="body1" gutterBottom>
+                          {task.name}
+                        </Typography>
+                        <div className={styles.taskButtons}>
+                          <IconButton
+                            size="small"
+                            aria-label="edit task"
+                            onClick={() => handleTaskEdit(task.id)}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            aria-label="delete task"
+                            onClick={() => handleCardDelete(task.id)}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </div>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+                {listIndex === addingTaskIndex && (
+                  <div className={styles.newTask}>
+                    <TextField
+                      id={`new-task-input-${listIndex}`}
+                      label="New Task"
+                      variant="outlined"
+                      size="small"
+                      value={newTaskName}
+                      onChange={(e) => setNewTaskName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleConfirmTask();
+                        }
+                      }}
+                    />
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={<AddIcon />}
+                      onClick={handleConfirmTask}
+                    >
+                      Add Task
                     </Button>
-                  </Typography>
-                </Popover>
+                  </div>
+                )}
               </div>
             )}
-          </PopupState>
-        </div>
-      </div>
-      <div>
-        {list.tasks.map((task, taskIndex) => (
-          <StyledColumn className={styles.task} key={taskIndex}>
-            <div className={styles.taskName} onClick={() => handleTaskClick(task, list.id, taskIndex)}>
-              {task.name}
+          </Droppable>
+          {!addingTaskIndex && (
+            <div className={styles.addTaskButton}>
+              <Button variant="outlined" size="small" onClick={handleAddTask}>
+                + Add a task
+              </Button>
             </div>
-            <div className={styles.taskActions}>
-              <div className={styles.moreIconContainer}>
-                <PopupState variant="popover" popupId={`demo-popup-popover-${taskIndex}`}>
-
-                  {(popupState) => (
-                    <div>
-                      <IconButton {...bindTrigger(popupState)} className={styles.moreIconButton}>
-                        <MoreHorizIcon className={styles.moreIcon} />
-                      </IconButton>
-                      <Popover
-                        {...bindPopover(popupState)}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "center",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "center",
-                        }}
-                      >
-                        <Typography sx={{ p: 2 }}>
-                          <Button onClick={() => handleCardDelete(task.id)}>
-                            <DeleteIcon />
-                          </Button>
-                        </Typography>
-                      </Popover>
-                    </div>
-                  )}
-                </PopupState>
-              </div>
-              <IconButton className={styles.editDeleteIcon} onClick={() => handleEditTask(task.id)}>
-                <EditIcon className={styles.editIcon} />
-              </IconButton>
-
-            </div>
-          </StyledColumn>
-        ))}
-      </div>
-      {addingTaskIndex === listIndex ? (
-        <div className={styles.addTaskContainer}>
-          <div>
-            <TextField
-              className={styles.addTaskInput}
-              label="Task Name"
-              value={newTaskName}
-              onChange={(e) => setNewTaskName(e.target.value)}
-              variant="filled"
-              size="small"
-              autoFocus
-            />
-          </div>
-          <div>
-            <Button className={styles.addTaskButton} variant="contained" startIcon={<AddIcon />} onClick={handleConfirmTask}>
-              {editingTaskId ? "Update" : "Add"}
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <IconButton className={styles.addTaskButton} size="small" onClick={handleAddTask}>
-          <AddIcon /> Add a card
-        </IconButton>
+          )}
+        </StyledColumn>
       )}
-    </StyledColumn>
+    </Draggable>
   );
 };
 
 export default List;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
