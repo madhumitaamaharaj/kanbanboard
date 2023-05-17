@@ -11,7 +11,7 @@ import "react-quill/dist/quill.snow.css";
 import styles from "./Activity.module.css";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { listid, listsState, tasksIndex } from "../card/atom";
+import { listId, listsState, tasksIndex } from "../card/atom";
 
 export default function Activity() {
   const [showDetails, setShowDetails] = useState(false);
@@ -20,7 +20,7 @@ export default function Activity() {
   const [activity, setActivity] = useState("");
   const [showDescription, setShowDescription] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
-  const [listsid, setlistsId] = useRecoilState(listid);
+  const [listsid, setlistsId] = useRecoilState(listId);
   const [taskIndex, setTaskIndex] = useRecoilState(tasksIndex);
   const navigate = useNavigate();
   const [List, setList] = useRecoilState(listsState);

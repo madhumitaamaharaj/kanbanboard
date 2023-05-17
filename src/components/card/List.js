@@ -1,50 +1,76 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { StyledColumn } from "./StyledComponents";
+import { StyledColumn } from "./StyledComponents"; // Adjust the import path accordingly
 import { useRecoilState } from "recoil";
-import { addingTaskIndexState, newTaskNameState, listsState, cardDataState, listid, tasksIndex } from "./atom";
+import {
+  addingTaskIndexState,
+  newTaskNameState,
+  listsState,
+  cardDataState,
+  listId,
+  tasksIndex,
+} from "./atom";
 import { Typography, TextField, Button, IconButton, Popover } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import styles from "./list.module.css";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import styles from "./List.module.css";
 
-const List = () => {
+const List = ({ list, listIndex }) => {
   const [addingTaskIndex, setAddingTaskIndex] = useRecoilState(addingTaskIndexState);
   const [newTaskName, setNewTaskName] = useRecoilState(newTaskNameState);
   const [lists, setLists] = useRecoilState(listsState);
   const navigate = useNavigate();
   const [, setCardData] = useRecoilState(cardDataState);
-  const [listId, setListId] = useRecoilState(listid);
-  const [, setTasksIndex] = useRecoilState(tasksIndex);
+  const [, setListsId] = useRecoilState(listId);
+  const [, setTaskIndex] = useRecoilState(tasksIndex);
+  const [editingTaskId, setEditingTaskId] = useState(null);
 
-  const handleAddTask = (listIndex) => {
+  const handleAddTask = () => {
     setAddingTaskIndex(listIndex);
+    setEditingTaskId(null);
+    setNewTaskName("");
   };
 
-  const handleConfirmTask = (listIndex) => {
+  const handleConfirmTask = () => {
     if (newTaskName) {
       setLists((prevLists) => {
         const updatedLists = [...prevLists];
         const newTask = {
-          id: uuid(),
+          id: editingTaskId || uuid(),
           name: newTaskName,
           description: "",
           activity: [],
         };
-        updatedLists[listIndex] = {
-          ...updatedLists[listIndex],
-          tasks: [...updatedLists[listIndex].tasks, newTask],
-        };
+        if (editingTaskId) {
+          const existingTaskIndex = updatedLists[addingTaskIndex].tasks.findIndex((task) => task.id === editingTaskId);
+          if (existingTaskIndex !== -1) {
+            updatedLists[addingTaskIndex] = {
+              ...updatedLists[addingTaskIndex],
+              tasks: [
+                ...updatedLists[addingTaskIndex].tasks.slice(0, existingTaskIndex),
+                newTask,
+                ...updatedLists[addingTaskIndex].tasks.slice(existingTaskIndex + 1),
+              ],
+            };
+          }
+        } else {
+          updatedLists[addingTaskIndex] = {
+            ...updatedLists[addingTaskIndex],
+            tasks: [...updatedLists[addingTaskIndex].tasks, newTask],
+          };
+        }
         return updatedLists;
       });
       setNewTaskName("");
       setAddingTaskIndex(null);
+      setEditingTaskId(null);
     }
   };
+
 
   const handleListDelete = (id) => {
     const filteredList = lists.filter((list) => list.id !== id);
@@ -52,7 +78,7 @@ const List = () => {
     localStorage.setItem("Lists", JSON.stringify(filteredList));
   };
 
-  const handleCardDelete = (listIndex, cardId) => {
+  const handleCardDelete = (cardId) => {
     setLists((prevLists) => {
       const updatedLists = [...prevLists];
       const updatedTasks = updatedLists[listIndex].tasks.filter((task) => task.id !== cardId);
@@ -64,159 +90,156 @@ const List = () => {
     });
   };
 
+  const handleEditTask = (taskId) => {
+    const task = lists[listIndex].tasks.find((t) => t.id === taskId);
+    if (task) {
+      setNewTaskName(task.name);
+      setAddingTaskIndex(listIndex);
+      setEditingTaskId(task.id);
+    }
+  };
+
   useEffect(() => {
     localStorage.setItem("Lists", JSON.stringify(lists));
   }, [lists]);
 
-  const handleTaskClick = (task, listIndex, taskIndex) => {
+  const handleTaskClick = (task, listId, taskId) => {
     setCardData((prevData) => ({
       ...prevData,
       taskName: "Card Name",
     }));
-    setListId(listIndex);
-    setTasksIndex(taskIndex);
+    setListsId(listId);
+    setTaskIndex(taskId);
     navigate(`/activity/${task.id}`);
+
   };
 
-const handleDragEnd = (result) => {
-  const { source, destination } = result;
-  if (!destination) {
-    return;
-  }
-  if (source.droppableId === destination.droppableId && source.index === destination.index) {
-    return;
-  }
-  setLists((prevLists) => {
-    const updatedLists = [...prevLists];
-    const sourceListIndex = updatedLists.findIndex(list => `list-${list.id}` === source.droppableId);
-    const destinationListIndex = updatedLists.findIndex(list => `list-${list.id}` === destination.droppableId);
-    const sourceList = updatedLists[sourceListIndex];
-    const destinationList = updatedLists[destinationListIndex];
-    const [removed] = sourceList.tasks.splice(source.index, 1);
-    destinationList.tasks.splice(destination.index, 0, removed);
-    return updatedLists;
-  });
-};
-
-
   return (
-    <div>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="list">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              {lists.map((list, listIndex) => (
-                <Draggable key={list.id} draggableId={list.id.toString()} index={listIndex}>
-                  {(provided) => (
-                    <StyledColumn
-                      {...provided.draggableProps}
-                      ref={provided.innerRef}
-                      {...provided.dragHandleProps}
-                    >
-                      <div className={styles.header}>
-                        <Typography variant="h6" className={styles.title}>
-                          {list.name}
-                        </Typography>
-                        <PopupState variant="popover" popupId="demo-popup-popover">
-                          {(popupState) => (
-                            <div>
-                              <IconButton {...bindTrigger(popupState)}>
-                                <MoreHorizIcon />
-                              </IconButton>
-                              <Popover {...bindPopover(popupState)}>
-                                <Typography sx={{ p: 2 }}>
-                                  <Button
-                                    onClick={() => handleListDelete(list.id)}
-                                    variant="outlined"
-                                    color="error"
-                                  >
-                                    Delete List
-                                  </Button>
-                                </Typography>
-                              </Popover>
-                            </div>
-                          )}
-                        </PopupState>
-                      </div>
-                      <Droppable droppableId={`list-${list.id}`} key={list.id}>
-                        {(provided) => (
-                          <div {...provided.droppableProps} ref={provided.innerRef}>
-                            {list.tasks.map((task, taskIndex) => (
-                              <Draggable
-                                key={task.id}
-                                draggableId={task.id.toString()}
-                                index={taskIndex}
-                              >
-                                {(provided) => (
-                                  <div
-                                    className={styles.taskContainer}
-                                    {...provided.draggableProps}
-                                    ref={provided.innerRef}
-                                  >
-                                    <Typography
-                                      className={styles.taskName}
-                                      variant="body1"
-                                      onClick={() => handleTaskClick(task, listIndex, taskIndex)}
-                                    >
-                                      {task.name}
-                                    </Typography>
-                                    <IconButton
-                                      onClick={() => handleCardDelete(listIndex, task.id)}
-                                    >
-                                      <CloseIcon />
-                                    </IconButton>
-                                  </div>
-                                )}
-                              </Draggable>
-                            ))}
-                            {provided.placeholder}
-                          </div>
-                        )}
-                      </Droppable>
-                      {addingTaskIndex === listIndex ? (
-                        <div className={styles.newTaskContainer}>
-                          <TextField
-                            label="New Task"
-                            value={newTaskName}
-                            onChange={(e) => setNewTaskName(e.target.value)}
-                            fullWidth
-                          />
-                          <div className={styles.buttons}>
-                            <Button
-                              onClick={() => handleConfirmTask(listIndex)}
-                              variant="contained"
-                              color="primary"
-                              size="small"
-                              className={styles.confirmButton}
-                            >
-                              Confirm
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <Button
-                          onClick={() => handleAddTask(listIndex)}
-                          startIcon={<AddIcon />}
-                          fullWidth
-                          variant="outlined"
-                          color="primary"
-                          size="small"
-                        >
-                          Add Task
-                        </Button>
-                      )}
-                    </StyledColumn>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
+    <StyledColumn className={styles.list}>
+      <div className={styles.container}>
+        <Typography variant="h6" className={styles.title}>
+          {list.name}
+        </Typography>
+        <div className={styles.actions}>
+          <PopupState variant="popover" popupId="demo-popup-popover">
+            {(popupState) => (
+              <div>
+                <IconButton {...bindTrigger(popupState)} className={styles.moreIconContainer}>
+                  <MoreHorizIcon />
+                </IconButton>
+                <Popover
+                  {...bindPopover(popupState)}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                >
+                  <Typography sx={{ p: 2 }}>
+                    <Button onClick={() => handleListDelete(list.id)}>
+                      <DeleteIcon />
+                    </Button>
+                  </Typography>
+                </Popover>
+              </div>
+            )}
+          </PopupState>
+        </div>
+      </div>
+      <div>
+        {list.tasks.map((task, taskIndex) => (
+          <StyledColumn className={styles.task} key={taskIndex}>
+            <div className={styles.taskName} onClick={() => handleTaskClick(task, list.id, taskIndex)}>
+              {task.name}
             </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </div>
+            <div className={styles.taskActions}>
+              <div className={styles.moreIconContainer}>
+                <PopupState variant="popover" popupId={`demo-popup-popover-${taskIndex}`}>
+
+                  {(popupState) => (
+                    <div>
+                      <IconButton {...bindTrigger(popupState)} className={styles.moreIconButton}>
+                        <MoreHorizIcon className={styles.moreIcon} />
+                      </IconButton>
+                      <Popover
+                        {...bindPopover(popupState)}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
+                      >
+                        <Typography sx={{ p: 2 }}>
+                          <Button onClick={() => handleCardDelete(task.id)}>
+                            <DeleteIcon />
+                          </Button>
+                        </Typography>
+                      </Popover>
+                    </div>
+                  )}
+                </PopupState>
+              </div>
+              <IconButton className={styles.editDeleteIcon} onClick={() => handleEditTask(task.id)}>
+                <EditIcon className={styles.editIcon} />
+              </IconButton>
+
+            </div>
+          </StyledColumn>
+        ))}
+      </div>
+      {addingTaskIndex === listIndex ? (
+        <div className={styles.addTaskContainer}>
+          <div>
+            <TextField
+              className={styles.addTaskInput}
+              label="Task Name"
+              value={newTaskName}
+              onChange={(e) => setNewTaskName(e.target.value)}
+              variant="filled"
+              size="small"
+              autoFocus
+            />
+          </div>
+          <div>
+            <Button className={styles.addTaskButton} variant="contained" startIcon={<AddIcon />} onClick={handleConfirmTask}>
+              {editingTaskId ? "Update" : "Add"}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <IconButton className={styles.addTaskButton} size="small" onClick={handleAddTask}>
+          <AddIcon /> Add a card
+        </IconButton>
+      )}
+    </StyledColumn>
   );
-  
 };
 
 export default List;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

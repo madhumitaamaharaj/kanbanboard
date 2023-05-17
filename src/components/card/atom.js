@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
-export const listid = atom({
-  key: 'listid',
+export const listId = atom({
+  key: 'listId',
   default: null,
 });
 export const tasksIndex = atom({
