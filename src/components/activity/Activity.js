@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/joy/Button";
-
+import { StyledColumn } from "../card/StyledComponents";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
@@ -10,8 +10,6 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import styles from "./Activity.module.css";
 import { useNavigate } from "react-router-dom";
-
-
 import { useRecoilState } from "recoil";
 import { listId, listsState, tasksIndex } from "../card/atom";
 
@@ -23,10 +21,10 @@ export default function Activity() {
   const [showDescription, setShowDescription] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
   const [listsid, setlistsId] = useRecoilState(listId);
-  const [editingDescription, setEditingDescription] = useState(false);
   const [taskIndex, setTaskIndex] = useRecoilState(tasksIndex);
   const navigate = useNavigate();
   const [List, setList] = useRecoilState(listsState);
+
   const handleCloseDialog = () => {
     console.log("Dialog closed");
   };
@@ -43,27 +41,23 @@ export default function Activity() {
     setDescription(value);
   };
 
-
   const handleActivityChange = (value) => {
     setActivity(value);
   };
 
-
   const handleShowDescription = () => {
     setShowDescription(true);
   };
-  function addDescription() {
+
+  const addDescription = () => {
     const newList = List.map((item) => {
       if (item.id === listsid) {
         const newTaskList = item.tasks.map((obj, index) => {
           if (index === taskIndex) {
             return { ...obj, description: description };
-
           } else {
-
             return obj;
           }
-
         });
 
         return { ...item, tasks: newTaskList };
@@ -72,22 +66,21 @@ export default function Activity() {
       }
     });
     setList(newList);
-    console.log(description);
     localStorage.setItem("Lists", JSON.stringify(newList));
     setDescription("");
-  }
-  function addActivity() {
+  };
+
+  const addActivity = () => {
+    const newActivity = { comment: activity };
     const newList = List.map((item) => {
       if (item.id === listsid) {
         const newTaskList = item.tasks.map((obj, index) => {
           if (index === taskIndex) {
-            return { ...obj, activity: activity };
-
+            const updatedActivity = obj.activity ? [...obj.activity, newActivity] : [newActivity];
+            return { ...obj, activity: updatedActivity };
           } else {
-
             return obj;
           }
-
         });
 
         return { ...item, tasks: newTaskList };
@@ -96,28 +89,43 @@ export default function Activity() {
       }
     });
     setList(newList);
-    console.log(description);
     localStorage.setItem("Lists", JSON.stringify(newList));
     setActivity("");
-  }
+    setShowActivity(false);
+  };
 
-
-
+  const handleAddAnotherComment = () => {
+    setShowActivity(true);
+  };
   const handleCancelDescription = () => {
-    setEditingDescription(false);
     setShowDescription(false);
-
     setDescription("");
   };
+
   const handleCancelActivity = () => {
-
     setShowActivity(false);
-
     setActivity("");
   };
+
   const handleShowActive = () => {
     setShowActivity(true);
   };
+
+  const getTask = () => {
+    const currentList = List.find((item) => item.id === listsid);
+    if (currentList && currentList.tasks && currentList.tasks.length > taskIndex) {
+      return currentList.tasks[taskIndex];
+    }
+    return null;
+  };
+
+  const task = getTask();
+
+  if (!task) {
+    return null;
+  }
+
+  const { description: savedDescription, activity: savedActivity } = task;
 
   return (
     <>
@@ -134,11 +142,10 @@ export default function Activity() {
               color="neutral"
               size="small"
             >
-              <CloseIcon onClick={() => navigate('/')} />
+              <CloseIcon onClick={() => navigate("/")} />
             </IconButton>
           </div>
         </div>
-        <span className={styles.para}>in list To Do</span>
         <div className={styles.notificationWatchContainer}>
           <div className={styles.notification}>
             <span className={styles.notificationText}>Notifications</span>
@@ -153,11 +160,12 @@ export default function Activity() {
         <div className={styles.des}>
           <MenuIcon sx={{ marginRight: "1rem" }} /> <h4>Description</h4>
           <div className={styles.watchButton1}>
-           <Button variant="contained" onClick={handleShowDescription}>Edit</Button>
-            
+            <Button variant="contained" onClick={handleShowDescription}>
+              Edit
+            </Button>
           </div>
         </div>
-        {showDescription && (
+        {showDescription ? (
           <div className={styles.descriptionBox}>
             <ReactQuill
               value={description}
@@ -176,6 +184,21 @@ export default function Activity() {
               </Button>
             </div>
           </div>
+        ) : (
+          <>
+            {savedDescription ? (
+              <div
+                className={styles.savedText}
+                dangerouslySetInnerHTML={{ __html: savedDescription }}
+              />
+            ) : (
+              <input
+                className={styles.secondInputBox}
+                placeholder="Write a Comment..."
+                onClick={handleShowDescription}
+              />
+            )}
+          </>
         )}
 
         <div className={styles.des}>
@@ -186,34 +209,52 @@ export default function Activity() {
             </Button>
           </div>
         </div>
-
         {showActivity ? (
-
           <div className={styles.activity}>
-
             <ReactQuill
               value={activity}
               onChange={handleActivityChange}
               placeholder="Write a Comment..."
             />
-            <Button onClick={addActivity}>Save</Button>
-            <Button
-              color="neutral"
-              variant="soft"
-              onClick={handleCancelActivity}
-              sx={{ marginLeft: "0.5rem" }}
-            >
-              Cancel
-            </Button>
+            <div className={styles.buttonContainer}>
+              <Button onClick={addActivity}>Save</Button>
+              <Button
+                color="neutral"
+                variant="soft"
+                onClick={handleCancelActivity}
+                sx={{ marginLeft: "0.5rem" }}
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         ) : (
-          <input
-            className={styles.secondInputBox}
-            placeholder="Write a Comment..."
-            onClick={handleShowActive}
-          />
+          <>
+            {savedActivity && savedActivity.length > 0 ? (
+              <div className={styles.savedActivity}>
+                <Button className={styles.btn} onClick={handleShowActive}>Add Comment</Button>
+                {savedActivity.map((comment, index) => (
+                  <div
+                    key={index}
+                    className={styles.savedText}
+                    dangerouslySetInnerHTML={{ __html: comment.comment }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <>
+                <input
+                  className={styles.secondInputBox}
+                  placeholder="Write a Comment..."
+                  onClick={handleShowActive}
+                />
+
+              </>
+            )}
+          </>
         )}
-       
+
+
       </div>
     </>
   );

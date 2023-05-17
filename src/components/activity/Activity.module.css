@@ -1,93 +1,104 @@
-.mainDiv{
+.mainDiv {
+    background-color: #cecbcb;
+    padding: 1rem;
+    border-radius: 5px;
+    width: 40%;
+    height: 100vh;
     margin: 0 30%;
-    border: 1px solid;
-    width: 30rem;
-    height: 50rem;
-    padding: 0 1.5rem;
-    border-radius: .5rem;
-    z-index: 10000;
-    overflow:auto;
-    /* scrollbar-width: thin;
-    scrollbar-color: transparent ; */
-}
-
-.mainDiv::-webkit-scrollbar {
-    display:none;
-}
-
-.title{
+  }
+  
+  .title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-.head{
-    margin-bottom: 0;
-}
-.notificationWatchContainer {
-    display: flex;
-    align-items: center;
-    margin-top: 1rem;
-  }
-  .watchButton {
-display: flex;
-flex-direction: column;
-    margin-left: 15rem;
-  }
-    .watchButton:hover {
-        background-color: lightgray;
-      }
-    
-.para{
-    margin-left: 2.7rem;
-    
-}
-.des{
-    margin-top: 1rem;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-}
-.editButton {
-    margin-right: 1rem;
-    cursor: pointer;
-  }
-.username{
-    border: 1px solid;
-    border-radius: 50%;
-    background-color: rgb(7, 105, 218);
-    color: white;
-    padding: .3rem;
-}
-.firstInputBox{
-    margin-left: 2.7rem;
-    width: 25rem;
-    height: 3.5rem;   
-    margin-bottom: .5rem;
-}
-.secondInputBox{
-    margin-left: .8rem;
-    width: 25rem;
-    height: 1.8rem;   
-}
-.comments{
-    margin-left: 1rem;
-}
-.commentsTime{
-    margin-left: 2.9rem;
-    margin-top: 0;
-    font-size: small;
-}
-.secondInputBox {
-    margin-top: 1rem;
     margin-bottom: 1rem;
-    width: 25rem;
-    height: 1.8rem;
   }
-  .watchButton1 {
+  
+  .head {
     display: flex;
-    flex-direction: column;
-        margin-left: 15rem;
-      }
-        .watchButton1:hover {
-            background-color: lightgray;
-          }
+    align-items: center;
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  .codeZingerIcon {
+    background-color: #333;
+    width: 25px;
+    height: 25px;
+    margin-right: 0.5rem;
+  }
+  
+  .closeButton {
+    display: flex;
+  }
+  
+  .notificationWatchContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .notification {
+    background-color: #ffcc80;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+  }
+  
+  .notificationText {
+    font-weight: bold;
+  }
+  
+  .watchButton1 {
+    margin-left: auto;
+  }
+  
+  .des {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .watchButton {
+    margin-left: 1rem;
+  }
+  
+  .descriptionBox {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+  
+  .buttonContainer {
+    margin-top: 1rem;
+  }
+  .btn{
+    margin-bottom: 10rem;
+  }
+  
+  .activity {
+    background-color: #fff;
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+  
+  .savedActivity {
+    margin-bottom: 1rem;
+  }
+  
+  .secondInputBox {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+  }
+  
+  .savedText {
+    background-color: #f9f9f9;
+    padding: 0.2rem;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+  }
+  
