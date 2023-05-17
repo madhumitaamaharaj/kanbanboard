@@ -115,120 +115,122 @@ const List = ({ list, listIndex }) => {
 
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <StyledColumn>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="h6" style={{ marginRight: "10px" }}>
-            {list.name}
-          </Typography>
-          <div style={{ flex: 1 }}></div>
-          <PopupState variant="popover" popupId="demo-popup-popover">
-            {(popupState) => (
-              <div>
-                <Button variant="contained" {...bindTrigger(popupState)}>
-                  <MoreHorizIcon />
-                </Button>
-                <Popover
-                  {...bindPopover(popupState)}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
-                  }}
-                >
-                  <Typography sx={{ p: 2 }}>
-                    <button onClick={() => handleListDelete(list.id)}>Delete</button>
-                  </Typography>
-                </Popover>
+    <DragDropContext onDragEnd={(result) => handleDragEnd(result)}>
+      <Droppable droppableId={list.id}>
+        {(provided) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            <StyledColumn>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Typography variant="h6" style={{ marginRight: "10px" }}>
+                  {list.name}
+                </Typography>
+                <div style={{ flex: 1 }}></div>
+                <PopupState variant="popover" popupId="demo-popup-popover">
+                  {(popupState) => (
+                    <div>
+                      <Button variant="contained" {...bindTrigger(popupState)}>
+                        <MoreHorizIcon />
+                      </Button>
+                      <Popover
+                        {...bindPopover(popupState)}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
+                      >
+                        <Typography sx={{ p: 2 }}>
+                          <button onClick={() => handleListDelete(list.id)}>Delete</button>
+                        </Typography>
+                      </Popover>
+                    </div>
+                  )}
+                </PopupState>
               </div>
-            )}
-          </PopupState>
-        </div>
-        <div>
-          <Droppable key={list.id} droppableId={list.id} >
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
+              <div>
                 {list.tasks.map((task, taskIndex) => (
                   <Draggable key={task.id} draggableId={task.id} index={taskIndex}>
                     {(provided) => (
-                      <StyledColumn
-                        className="task"
+                      <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <div
-                          style={{ marginRight: "10px" }}
-                          onClick={() => handleTaskClick(task, list.id, taskIndex)}
-                        >
-                          {task.name}
-                        </div>
-                        <div style={{ flex: 1 }}></div>
-                        <PopupState variant="popover" popupId="demo-popup-popover">
-                          {(popupState) => (
-                            <div>
-                              <Button variant="contained" {...bindTrigger(popupState)}>
-                                <MoreHorizIcon />
-                              </Button>
-                              <Popover
-                                {...bindPopover(popupState)}
-                                anchorOrigin={{
-                                  vertical: "bottom",
-                                  horizontal: "center",
-                                }}
-                                transformOrigin={{
-                                  vertical: "top",
-                                  horizontal: "center",
-                                }}
-                              >
-                                <Typography sx={{ p: 2 }}>
-                                  <button
-                                    className={styles.botton}
-                                    onClick={() => handleCardDelete(task.id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </Typography>
-                              </Popover>
-                            </div>
-                          )}
-                        </PopupState>
-                      </StyledColumn>
+                        <StyledColumn className="task" key={taskIndex}>
+                          <div
+                            style={{ marginRight: "10px" }}
+                            onClick={() => handleTaskClick(task, list.id, taskIndex)}
+                          >
+                            {task.name}
+                          </div>
+                          <div style={{ flex: 1 }}></div>
+                          <PopupState variant="popover" popupId="demo-popup-popover">
+                            {(popupState) => (
+                              <div>
+                                <Button variant="contained" {...bindTrigger(popupState)}>
+                                  <MoreHorizIcon />
+                                </Button>
+                                <Popover
+                                  {...bindPopover(popupState)}
+                                  anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "center",
+                                  }}
+                                  transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "center",
+                                  }}
+                                >
+                                  <Typography sx={{ p: 2 }}>
+                                    <button onClick={() => handleCardDelete(task.id)}>
+                                      Delete
+                                    </button>
+                                  </Typography>
+                                </Popover>
+                              </div>
+                            )}
+                          </PopupState>
+                        </StyledColumn>
+                      </div>
                     )}
                   </Draggable>
                 ))}
-                {provided.placeholder}
               </div>
-            )}
-          </Droppable>
-        </div>
-        {addingTaskIndex === listIndex ? (
-          <div>
-            <div>
-              <TextField
-                label="Task Name"
-                value={newTaskName}
-                onChange={(e) => setNewTaskName(e.target.value)}
-                variant="filled"
-                size="small"
-                autoFocus
-              />
-            </div>
-            <div>
-              <Button variant="contained" startIcon={<AddIcon />} onClick={handleConfirmTask}>
-                Add
-              </Button>
-            </div>
+              {addingTaskIndex === listIndex ? (
+                <div>
+                  <div>
+                    <TextField
+                      label="Task Name"
+                      value={newTaskName}
+                      onChange={(e) => setNewTaskName(e.target.value)}
+                      variant="filled"
+                      size="small"
+                      autoFocus
+                    />
+                  </div>
+                  <div>
+                    <Button
+                      variant="contained"
+                      startIcon={<AddIcon />}
+                      onClick={handleConfirmTask}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <IconButton size="small" onClick={handleAddTask}>
+                  + Add a card
+                </IconButton>
+              )}
+            </StyledColumn>
+            {provided.placeholder}
           </div>
-        ) : (
-          <IconButton size="small" onClick={handleAddTask}>
-            + Add a card
-          </IconButton>
         )}
-      </StyledColumn>
+      </Droppable>
     </DragDropContext>
   );
 };
