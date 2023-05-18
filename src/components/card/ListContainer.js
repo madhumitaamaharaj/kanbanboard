@@ -1,28 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import List from './List';
 import { addingTaskIndexState, listsState, newTaskNameState } from './atom';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { StyledBoard, StyledContainer } from './StyledComponents';
-
+import styles from "./listContainer.module.css"
 const ListContainer = () => {
   const [lists, setLists] = useRecoilState(listsState);
 
-
-  const handleDragEnd = (results) => {
-    
-    const { source, destination, type } = results;
-
-    if (!destination) return;
-
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    )
+ 
+  const handleDragEnd = (result) => {
+    const { destination, source, draggableId, type } = result;
+  
+    if (!destination) {
       return;
-
-    if (type === "group") {
+    }
+  
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+  
+    if (type === 'list') {
+      const newListOrder = Array.from(lists);
+      const movedList = newListOrder.splice(source.index, 1)[0];
+      newListOrder.splice(destination.index, 0, movedList);
+  
+      setLists(newListOrder);
+    }
+  
+   
+    if (type === "task") {
       const reorderedStores = [...lists];
 
       const storeSourceIndex = source.index;
@@ -44,11 +55,19 @@ const ListContainer = () => {
       (list) => list.id === destination.droppableId
     );
 
-    const newSourceItems = [...lists[storeSourceIndex].tasks];
-    const newDestinationItems =
-      source.droppableId !== destination.droppableId
-        ? [...lists[storeDestinationIndex].tasks]
-        : newSourceItems;
+    const sourceList = lists[storeSourceIndex];
+const destinationList = lists[storeDestinationIndex];
+
+if (!sourceList || !destinationList) {
+  // Handle the error condition when the source or destination list is not found
+  return;
+}
+
+const newSourceItems = [...sourceList.tasks];
+const newDestinationItems =
+  source.droppableId !== destination.droppableId
+    ? [...destinationList.tasks]
+    : newSourceItems;
 
     const [deletedItem] = newSourceItems.splice(itemSourceIndex, 1);
     newDestinationItems.splice(itemDestinationIndex, 0, deletedItem);
@@ -68,9 +87,9 @@ const ListContainer = () => {
     localStorage.setItem("Lists", JSON.stringify(newStores));
   };
   return (
-    <div>
+    <div className={styles.main}>
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable droppableId="all-lists" direction="horizontal" type="list">
+      <Droppable droppableId="listContainer" direction="horizontal" type="list">
         {(provided) => (
           <div
             {...provided.droppableProps}

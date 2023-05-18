@@ -7,6 +7,8 @@
   margin-bottom: 16px;
   background-color: antiquewhite;
   margin: 2rem;
+  flex-wrap: wrap; /* Added flex-wrap property */
+
 }
 
 .columnHeader {
