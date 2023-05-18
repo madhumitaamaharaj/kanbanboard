@@ -1,129 +1,91 @@
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 60px;
-    padding: 0 20px;
-    background-color: #026aa7;
-    color: #fff;
+.icon {
+  font-size: 20px;
+  color: #faf5f5;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  margin-left: 20px;
+}
+ .menuContainer {
+  display: flex;
+  align-items: center;
+  margin-right: 9 rem;
+}
+ .menuButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 10px;
+}
+ .arrowIcon {
+  font-size: 12px;
+  margin-left: 5px;
+}
+ .dropdownContent {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.dropdownContent a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown:hover .dropdownContent {
+  display: block;
+  border-radius: 23px;
+  font-size:medium;
+}
+ .logo {
+  font-size: 24px;
+   margin-right: 10px; 
+  /* padding: 10px; */
+}
+.logoText {
+  font-size: 20px;
+  font-weight: bold;
+}
+ .userImage {
+  border-radius: 50%;
+  margin-right: 10px;
+}
+ #whiteBtn{
+  border-radius: 10px;
+  background-color: white;
+  color: black;
   }
-  .logoContainer {
-    display: flex;
-    align-items: center;
+#whiteBtn:hover{
+  border-radius: 23px;
+   background-color: rgb(215, 9, 252);
+   color: white;
+}
+ 
+ 
+ .titleInput {
+  color: white;
+
+  .MuiInputBase-root {
+    width: 200px;
   }
-  .logo {
-    font-size: 24px;
-    margin-right: 10px;
-  }
-  .logoText {
-    font-size: 20px;
+
+  .MuiInputBase-input {
     font-weight: bold;
   }
-  .searchContainer {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    border-radius: 5px;
-    padding: 5px;
+
+  .MuiInput-underline:before {
+    border-bottom: 1px solid white;
   }
-  .searchInput {
-    border: none;
-    outline: none;
-    font-size: 14px; 
-    padding: 5px;
+
+  .MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-bottom: 1px solid white;
   }
-  .searchIcon {
-    font-size: 18px;
-    margin-right: 5px;
-  }
-  .menuContainer {
-    display: flex;
-    align-items: center;
-  }
-  .menuButton {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-    margin-right: 10px;
-  }
-  .buttonContainer {
-    display: flex;
-    align-items: center;
-  }
-  
-  .iconButton {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-  }
-  .icon {
-    font-size: 20px;
-    color: #fff;
-    opacity: 0.7;
-    transition: opacity 0.3s;
-  }
-  .iconButton:hover .icon {
-    opacity: 1;
-  }
-  .addButton {
-    display: flex;
-    align-items: center;
-    background-color: #5aac44;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    margin-left: 10px;
-    cursor: pointer;
-  }
-  .addIcon {
-    font-size: 18px;
-    margin-right: 5px;
-  }
-  .addText {
-    font-size: 14px;
-    font-weight: bold;
-    text-transform: uppercase;
-    white-space: nowrap;
-    color: #fff;
-    letter-spacing: 1px;
-  }
-  .dropdown {
-    position: relative;
-    display: inline-block;
-  }
-  .dropdownButton {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-    margin-right: 10px;
-  }
-  .dropdownContent {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    z-index: 1;
-  }
-  .dropdownContent a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-  }
-  .dropdown:hover .dropdownContent {
-    display: block;
-  }
-  .arrowIcon {
-    font-size: 12px;
-    margin-left: 5px;
-  }
+}
+
+

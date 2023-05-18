@@ -1,0 +1,51 @@
+.container{
+    /* display: flex; */
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(270deg, #f99c00, #006bff, #00f2ff, #9800ff);
+    background-size: 800% 800%;
+    
+    animation: bgAnimation 20s ease infinite;
+}
+    
+    @keyframes bgAnimation {
+        0%{background-position:0% 50%}
+        50%{background-position:100% 50%}
+        100%{background-position:0% 50%}
+    }
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    .heading{
+        display: flex;
+        justify-content: center ;
+        font-size: 50px;
+    }
+    .images{
+        flex-wrap: wrap;
+        display: flex;
+        justify-content: space-around;
+        
+    }
+    .image{
+        /* border: 2px solid; */
+        /* height: 200px; */
+        width: 20vw;
+        padding: 10px;
+        /* border-radius: 20px; */
+    }
+    .image:hover{
+        /* transform: scale(1.1); */
+        transform: scale(1.2);
+        transition: transform 1s ease;
+    }
+    .textField{
+       width: 550px;
+    }
+    .input{
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }

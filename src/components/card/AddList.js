@@ -6,7 +6,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { v4 as uuid } from "uuid";
 import { StyledColumn } from "./StyledComponents";
-
+import styles from "./AddList.module.css"
 const AddList = () => {
   const [newListName, setNewListName] = useRecoilState(newListNameState);
   const [showAddList, setShowAddList] = useRecoilState(showAddListState);
@@ -49,19 +49,20 @@ const AddList = () => {
                 size="small"
               />
             </div>
-            <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddList}>
+            <Button className={styles.addlist} variant="contained" startIcon={<AddIcon />} onClick={handleAddList}>
               Add List
             </Button>
-            <IconButton size="small" onClick={() => setShowAddList(false)}>
+            <IconButton className={styles.close} size="small" onClick={() => setShowAddList(false)}>
               <CloseIcon />
             </IconButton>
           </StyledColumn>
         </Grid>
       ) : (
-        <Grid item xs={12}>
+        <Grid item xs={10}>
           <StyledColumn>
-            <div className="add-list-button">
+            <div >
               <Button
+              className={styles.addlists}
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={() => setShowAddList(true)}

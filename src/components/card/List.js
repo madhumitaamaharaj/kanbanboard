@@ -143,7 +143,7 @@ const List = ({ list, listIndex }) => {
           className={styles.container}
         >
           <div className={styles.columnHeader}>
-            <Typography variant="h6" gutterBottom>
+            <Typography className={styles.listName} variant="h6" gutterBottom>
               {list.name}
             </Typography>
             <PopupState variant="popover" popupId="demo-popup-popover">
@@ -226,38 +226,38 @@ const List = ({ list, listIndex }) => {
                 ))}
                 {provided.placeholder}
                 {listIndex === addingTaskIndex && (
-  <div className={styles.newTask}>
-    <TextField
-      id={`new-task-input-${listIndex}`}
-      label="New Task"
-      variant="outlined"
-      size="small"
-      value={newTaskName}
-      onChange={(e) => setNewTaskName(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          handleConfirmTask();
-        }
-      }}
-    />
-    <Button
-      variant="contained"
-      size="small"
-      startIcon={<AddIcon />}
-      onClick={handleConfirmTask}
-    >
-      Add Task
-    </Button>
-  </div>
-)}
+                  <div className={styles.newTasks}>
+                    <TextField className={styles.newTask}
+                      id={`new-task-input-${listIndex}`}
+                      label="New Task"
+                      variant="outlined"
+                      size="small"
+                      value={newTaskName}
+                      onChange={(e) => setNewTaskName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleConfirmTask();
+                        }
+                      }}
+                    />
+                    <Button
+                      variant="contained"
+                      size="small"
+                      className={styles.btn}
+                      onClick={handleConfirmTask}
+                    >
+                      Add Task
+                    </Button>
+                  </div>
+                )}
 
-{listIndex !== addingTaskIndex && (
-  <div className={styles.addTaskButton}>
-    <Button variant="outlined" size="small" onClick={handleAddTask}>
-      + Add a task
-    </Button>
-  </div>
-)}
+                {listIndex !== addingTaskIndex && (
+                  <div className={styles.addTaskButton}>
+                    <Button variant="outlined" size="small" onClick={handleAddTask}>
+                      + Add a task
+                    </Button>
+                  </div>
+                )}
 
               </div>
             )}
