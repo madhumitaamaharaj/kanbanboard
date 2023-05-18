@@ -16,7 +16,6 @@ import {
 } from "./atom";
 import { Typography, TextField, Button, IconButton, Popover } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -37,6 +36,7 @@ const List = ({ list, listIndex }) => {
   const cardData = useRecoilValue(cardDataState);
   const [, setTaskName] = useRecoilState(taskName);
   const [, setListName] = useRecoilState(listName);
+
   const handleAddTask = () => {
     setAddingTaskIndex(listIndex);
     setEditingTaskId(null);
@@ -54,7 +54,9 @@ const List = ({ list, listIndex }) => {
           activity: [], // Add activity field
         };
         if (editingTaskId) {
-          const existingTaskIndex = updatedLists[addingTaskIndex].tasks.findIndex((task) => task.id === editingTaskId);
+          const existingTaskIndex = updatedLists[addingTaskIndex].tasks.findIndex(
+            (task) => task.id === editingTaskId
+          );
           if (existingTaskIndex !== -1) {
             updatedLists[addingTaskIndex] = {
               ...updatedLists[addingTaskIndex],
@@ -79,7 +81,6 @@ const List = ({ list, listIndex }) => {
       setEditingTaskId(null);
     }
   };
-
 
   const handleListDelete = (id) => {
     const filteredList = lists.filter((list) => list.id !== id);
@@ -118,28 +119,28 @@ const List = ({ list, listIndex }) => {
     setAddingTaskIndex(listIndex);
   };
 
-  const handleTaskClick = (task,index) => {
+  const handleTaskClick = (task, index) => {
     setCardData((prevData) => ({
       ...prevData,
       taskName: "Card Name",
     }));
-    setNewIndex(index)
+    setNewIndex(index);
     setListsId(list.id);
     setTaskIndex(task.id);
-    setTaskName(task.name)
-    setListName(list.name)
-    navigate(`/activity/${task.id}`); 
+    setTaskName(task.name);
+    setListName(list.name);
+    navigate(`/activity/${task.id}`);
   };
 
   return (
     <Draggable draggableId={String(list.id)} index={listIndex}>
       {(provided) => (
-        <StyledColumn
+        <div
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
           key={list.id}
-          className={styles.column}
+          className={styles.container}
         >
           <div className={styles.columnHeader}>
             <Typography variant="h6" gutterBottom>
@@ -185,7 +186,7 @@ const List = ({ list, listIndex }) => {
           </div>
           <Droppable droppableId={String(list.id)}>
             {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
+              <div ref={provided.innerRef} {...provided.droppableProps} className={styles.taskList}>
                 {list.tasks.map((task, index) => (
                   <Draggable key={task.id} draggableId={String(task.id)} index={index}>
                     {(provided) => (
@@ -195,7 +196,11 @@ const List = ({ list, listIndex }) => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <Typography onClick={() => handleTaskClick(task,index)} variant="body1" gutterBottom>
+                        <Typography
+                          onClick={() => handleTaskClick(task, index)}
+                          variant="body1"
+                          gutterBottom
+                        >
                           {task.name}
                         </Typography>
                         <div className={styles.taskButtons}>
@@ -221,41 +226,44 @@ const List = ({ list, listIndex }) => {
                 ))}
                 {provided.placeholder}
                 {listIndex === addingTaskIndex && (
-                  <div className={styles.newTask}>
-                    <TextField
-                      id={`new-task-input-${listIndex}`}
-                      label="New Task"
-                      variant="outlined"
-                      size="small"
-                      value={newTaskName}
-                      onChange={(e) => setNewTaskName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleConfirmTask();
-                        }
-                      }}
-                    />
-                    <Button
-                      variant="contained"
-                      size="small"
-                      startIcon={<AddIcon />}
-                      onClick={handleConfirmTask}
-                    >
-                      Add Task
-                    </Button>
-                  </div>
-                )}
+  <div className={styles.newTask}>
+    <TextField
+      id={`new-task-input-${listIndex}`}
+      label="New Task"
+      variant="outlined"
+      size="small"
+      value={newTaskName}
+      onChange={(e) => setNewTaskName(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          handleConfirmTask();
+        }
+      }}
+    />
+    <Button
+      variant="contained"
+      size="small"
+      startIcon={<AddIcon />}
+      onClick={handleConfirmTask}
+    >
+      Add Task
+    </Button>
+  </div>
+)}
+
+{listIndex !== addingTaskIndex && (
+  <div className={styles.addTaskButton}>
+    <Button variant="outlined" size="small" onClick={handleAddTask}>
+      + Add a task
+    </Button>
+  </div>
+)}
+
               </div>
             )}
           </Droppable>
-          {!addingTaskIndex && (
-            <div className={styles.addTaskButton}>
-              <Button variant="outlined" size="small" onClick={handleAddTask}>
-                + Add a task
-              </Button>
-            </div>
-          )}
-        </StyledColumn>
+
+        </div>
       )}
     </Draggable>
   );

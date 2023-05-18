@@ -9,7 +9,7 @@ import { StyledBoard, StyledContainer } from './StyledComponents';
 const ListContainer = () => {
   const [lists, setLists] = useRecoilState(listsState);
 
-  
+
   const handleDragEnd = (results) => {
     
     const { source, destination, type } = results;
@@ -68,20 +68,24 @@ const ListContainer = () => {
     localStorage.setItem("Lists", JSON.stringify(newStores));
   };
   return (
-    <StyledContainer>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="all-lists" direction="horizontal" type="list">
-          {(provided) => (
-            <StyledBoard {...provided.droppableProps} ref={provided.innerRef}>
-              {lists.map((list, index) => (
-                <List key={list.id} list={list} listIndex={index} />
-              ))}
-              {provided.placeholder}
-            </StyledBoard>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </StyledContainer>
+    <div>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Droppable droppableId="all-lists" direction="horizontal" type="list">
+        {(provided) => (
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            style={{ display: 'flex' }} // Added style to make it horizontal
+          >
+            {lists.map((list, index) => (
+              <List key={list.id} list={list} listIndex={index} />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
+  </div>
   );
 };
 

@@ -12,10 +12,11 @@ export const StyledBoard = styled('div')({
   display: 'flex',
   overflowX: 'auto',
   padding: '8px',
+  width:'100%'
 });
 
 export const StyledContainer = styled('div')({
-  maxWidth: '1200px',
-  margin: '0 auto',
+  maxWidth: '100%',
+  margin: '80 %',
   padding: '16px',
 });
