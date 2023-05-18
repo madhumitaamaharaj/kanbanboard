@@ -8,7 +8,18 @@ export const tasksIndex = atom({
   key: 'tasksIndex',
   default: null,
 });
-
+export const taskName = atom({
+  key: 'taskName',
+  default: null,
+});
+export const listName = atom({
+  key: 'listName',
+  default: null,
+});
+export const newIndex = atom({
+  key: 'newIndex',
+  default: null,
+});
 
 export const listsState = atom({
   key: 'listsState',

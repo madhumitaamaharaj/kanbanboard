@@ -93,6 +93,7 @@
     border-radius: 5px;
     border: 1px solid #ccc;
     margin-bottom: 0.5rem;
+    margin-left: 2rem;
   }
   
   .savedText {
@@ -101,4 +102,27 @@
     border-radius: 5px;
     margin-bottom: 0.5rem;
   }
-  
+  .currentDescription{
+    padding: 0.2rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+    background-color: #f9f9f9;
+    width: 80%;
+    margin-left: 2rem;
+    overflow-wrap: anywhere;
+  }
+ 
+  .comment{
+    
+      padding-left:  1rem;
+      border-radius: 20px;
+      border: 1px solid #f9f8f8;
+      margin: 0.5rem;
+      margin-left: 3rem;
+      background-color: #ffffff;
+      width: 50%;
+      overflow-wrap: anywhere;
+      align-items: center;
+   
+  }

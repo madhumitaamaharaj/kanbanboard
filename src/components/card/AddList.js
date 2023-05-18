@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Button, IconButton, TextField } from "@mui/material";
-
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { newListNameState, showAddListState, listsState, listId } from "./atom";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -11,26 +10,28 @@ import { StyledColumn } from "./StyledComponents";
 const AddList = () => {
   const [newListName, setNewListName] = useRecoilState(newListNameState);
   const [showAddList, setShowAddList] = useRecoilState(showAddListState);
-  const [listsid, setlistsId] = useRecoilState(listId);
+  const [listid, setListId] = useRecoilState(listId);
   const [lists, setLists] = useRecoilState(listsState);
 
-  const storedList = JSON.parse(localStorage.getItem("Lists"));
   useEffect(() => {
+    const storedList = JSON.parse(localStorage.getItem("Lists"));
     if (storedList) {
       setLists(storedList);
     }
   }, []);
+
   const handleAddList = () => {
     if (newListName) {
       const newList = {
-        id: uuid(), 
+        id: uuid(),
         name: newListName,
         tasks: [],
       };
-      localStorage.setItem("Lists", JSON.stringify([...lists, newList]));
       setLists((prevLists) => [...prevLists, newList]);
       setNewListName("");
       setShowAddList(false);
+      setListId(newList.id);
+      localStorage.setItem("Lists", JSON.stringify([...lists, newList]));
     }
   };
 
@@ -48,11 +49,7 @@ const AddList = () => {
                 size="small"
               />
             </div>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={handleAddList}
-            >
+            <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddList}>
               Add List
             </Button>
             <IconButton size="small" onClick={() => setShowAddList(false)}>
@@ -78,4 +75,5 @@ const AddList = () => {
     </Grid>
   );
 };
+
 export default AddList;

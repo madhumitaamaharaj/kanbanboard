@@ -8,47 +8,65 @@ import { StyledBoard, StyledContainer } from './StyledComponents';
 
 const ListContainer = () => {
   const [lists, setLists] = useRecoilState(listsState);
-  const handleDragEnd = (result) => {
-    if (!result.destination) return;
 
-    const { source, destination } = result;
+  
+  const handleDragEnd = (results) => {
+    
+    const { source, destination, type } = results;
 
-    if (source.droppableId === destination.droppableId && source.index === destination.index) {
+    if (!destination) return;
+
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    )
       return;
+
+    if (type === "group") {
+      const reorderedStores = [...lists];
+
+      const storeSourceIndex = source.index;
+      const storeDestinatonIndex = destination.index;
+
+      const [removedStore] = reorderedStores.splice(storeSourceIndex, 1);
+      reorderedStores.splice(storeDestinatonIndex, 0, removedStore);
+      localStorage.setItem("List", JSON.stringify(reorderedStores));
+
+      return setLists(reorderedStores);
     }
+    const itemSourceIndex = source.index;
+    const itemDestinationIndex = destination.index;
 
-    const updatedLists = Array.from(lists);
-    const sourceList = updatedLists.find((list) => list.id === source.droppableId);
-    const destinationList = updatedLists.find((list) => list.id === destination.droppableId);
+    const storeSourceIndex = lists.findIndex(
+      (list) => list.id === source.droppableId
+    );
+    const storeDestinationIndex = lists.findIndex(
+      (list) => list.id === destination.droppableId
+    );
 
-    const sourceTasks = Array.from(sourceList.tasks);
-    const [removed] = sourceTasks.splice(source.index, 1);
+    const newSourceItems = [...lists[storeSourceIndex].tasks];
+    const newDestinationItems =
+      source.droppableId !== destination.droppableId
+        ? [...lists[storeDestinationIndex].tasks]
+        : newSourceItems;
 
-    const updatedSourceList = {
-      ...sourceList,
-      tasks: sourceTasks,
+    const [deletedItem] = newSourceItems.splice(itemSourceIndex, 1);
+    newDestinationItems.splice(itemDestinationIndex, 0, deletedItem);
+
+    const newStores = [...lists];
+
+    newStores[storeSourceIndex] = {
+      ...lists[storeSourceIndex],
+      tasks: newSourceItems,
+    };
+    newStores[storeDestinationIndex] = {
+      ...lists[storeDestinationIndex],
+      tasks: newDestinationItems,
     };
 
-    const destinationTasks = Array.from(destinationList.tasks);
-    destinationTasks.splice(destination.index, 0, removed);
-
-    const updatedDestinationList = {
-      ...destinationList,
-      tasks: destinationTasks,
-    };
-
-    const sourceListIndex = updatedLists.findIndex((list) => list.id === source.droppableId);
-    const destinationListIndex = updatedLists.findIndex((list) => list.id === destination.droppableId);
-
-    updatedLists[sourceListIndex] = updatedSourceList;
-    updatedLists[destinationListIndex] = updatedDestinationList;
-
-    setLists(updatedLists);
-
-    // Update local storage
-    localStorage.setItem('Lists', JSON.stringify(updatedLists));
+    setLists(newStores);
+    localStorage.setItem("Lists", JSON.stringify(newStores));
   };
-
   return (
     <StyledContainer>
       <DragDropContext onDragEnd={handleDragEnd}>

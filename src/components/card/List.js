@@ -10,6 +10,9 @@ import {
   cardDataState,
   listId,
   tasksIndex,
+  newIndex,
+  taskName,
+  listName,
 } from "./atom";
 import { Typography, TextField, Button, IconButton, Popover } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -27,11 +30,13 @@ const List = ({ list, listIndex }) => {
   const [lists, setLists] = useRecoilState(listsState);
   const navigate = useNavigate();
   const [, setCardData] = useRecoilState(cardDataState);
+  const [, setNewIndex] = useRecoilState(newIndex);
   const [, setListsId] = useRecoilState(listId);
   const [, setTaskIndex] = useRecoilState(tasksIndex);
   const [editingTaskId, setEditingTaskId] = useState(null);
   const cardData = useRecoilValue(cardDataState);
-
+  const [, setTaskName] = useRecoilState(taskName);
+  const [, setListName] = useRecoilState(listName);
   const handleAddTask = () => {
     setAddingTaskIndex(listIndex);
     setEditingTaskId(null);
@@ -113,14 +118,17 @@ const List = ({ list, listIndex }) => {
     setAddingTaskIndex(listIndex);
   };
 
-  const handleTaskClick = (task) => {
+  const handleTaskClick = (task,index) => {
     setCardData((prevData) => ({
       ...prevData,
       taskName: "Card Name",
     }));
+    setNewIndex(index)
     setListsId(list.id);
     setTaskIndex(task.id);
-    navigate(`/activity/${task.id}`); // Navigate to activity page
+    setTaskName(task.name)
+    setListName(list.name)
+    navigate(`/activity/${task.id}`); 
   };
 
   return (
@@ -187,7 +195,7 @@ const List = ({ list, listIndex }) => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <Typography onClick={() => handleTaskClick(task)} variant="body1" gutterBottom>
+                        <Typography onClick={() => handleTaskClick(task,index)} variant="body1" gutterBottom>
                           {task.name}
                         </Typography>
                         <div className={styles.taskButtons}>
